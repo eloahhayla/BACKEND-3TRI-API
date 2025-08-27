@@ -1,19 +1,25 @@
+// npm init -> inicia a API
+// npm i express -> biblioteca do express
 const express = require("express")
 const app = express()
-const port = 3001
+const port = 3002
 app.use(express.json())
-const usuarios = []
-app.post('/usuarios', (req, res)=>{
-    const usuario = req.body //"pega" os dados da requesição(/pergunta/dados tipo, de uma compra)
-    usuarios.push(usuario) // adiciona o usuário na lista de usuários
-    res.send("Usuário cadastrado com sucesso!")
+
+// npm i mysql2
+const db = require("./db")
+
+// npm i bcrypt
+const bcrypt = require("bcrypt")
+
+app.post("/cadastrar", (req, res)=>{
+  const cliente = req.body
+  const senhaCript = bcrypt.hashSync(cliente.senha, 10)
+  res.send(senhaCript)
 })
-app.get('/usuarios', (req, res)=>{
-    res.send(usuarios)
+app.get("/usuarios", (req, res)=>{
+  res.send(usuarios)
 })
-app.get('/ola', (req, res)=>{
-    res.send("Olá 3ºDS!")
-})
+
 app.listen(port, ()=>{
-    console.log("API rodando...")
+  console.log("API RODANDO NA PORTA" + port)
 })

@@ -1,8 +1,13 @@
 {
-    "nome": "",
-    "dt_nasc": "",
-    "cpf": "",
-    "email": "",
-    "celular": "",
-    "senha": ""
+    "nome_completo": "Zé Ninguém",
+    "cpf": "000.000.000-00",
+    "estado": "PR",
+    "cidade": "Ponta Grossa",
+    "bairro": "Centro",
+    "n_casa": "111",
+    "rua": "Sem Nome",
+    "cep": "84000000",
+    "email": "zeninguem@gmail.com",
+    "telefone": "(42) 99999-9999",
+    "senha": "1234"
 }

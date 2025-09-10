@@ -10,7 +10,10 @@ const db = require("./db")
 
 // npm i bcrypt
 const bcrypt = require("bcrypt")
-const { reduce } = require("lodash")
+
+// npm i cors
+const cors = require('cors')
+app.use(cors())
 
 app.post("/cadastrar", async (req, res)=>{
   const cliente = req.body

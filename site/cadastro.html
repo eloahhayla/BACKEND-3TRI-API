@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cadastro de Cliente</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: url("https://thumbs.dreamstime.com/b/empty-rectangular-frame-mermaid-birthday-party-invitation-pastel-purple-blue-tones-small-bubbles-367770280.jpg") no-repeat center center fixed;
+      background-size: cover;
+    }
+
+    header {
+      background-color: #ccfcffc9;
+      color: rgb(0, 0, 0);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 40px;
+      box-shadow: 0px 4px 6px #ff5dc1;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+    }
+
+    .logo img {
+      height: 60px;
+      margin-right: 15px;
+    }
+
+    .texto-logo h1 {
+      margin: 0;
+      font-size: 28px;
+      font-family: 'Georgia', serif;
+      color: #ff5dc1;
+    }
+
+    .texto-logo p {
+      margin: 0;
+      font-size: 14px;
+      font-style: italic;
+      color: #ff5dc1;
+    }
+
+    nav a {
+      color: #ff5dc1;
+      text-decoration: none;
+      margin-left: 25px;
+      font-weight: bold;
+      transition: color 0.3s;
+    }
+
+    nav a:hover {
+      color: #008cff;
+    }
+
+    main {
+      padding: 30px;
+    }
+
+    form {
+      background-color: #ccfcffc9;
+      padding: 20px;
+      border-radius: 20px;
+      box-shadow: 0px 4px 10px rgb(255, 102, 191);
+      width: 50%;
+      max-width: 600px;
+      margin: 40px auto;
+      border: 2px solid #ccfcffc9;
+    }
+
+    form label {
+      font-weight: bold;
+      margin-top: 10px;
+      color: #ff5bc0;
+      display: block;
+      text-align: left;
+    }
+
+    .input-texto {
+      display: block;
+      width: 100%;
+      max-width: 400px;
+      margin: 0 auto 15px auto;
+      padding: 10px;
+      background-color: #ffffff;
+      border: 2px solid #ff5dc1;
+      border-radius: 10px;
+      box-shadow: 1px 1px 4px #ff3cc5;
+      font-size: 1em;
+    }
+
+    input[type="submit"] {
+      background-color: #ff5dc1;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      font-size: 1.1em;
+      border-radius: 10px;
+      cursor: pointer;
+      box-shadow: 0px 3px 6px #5c83cac9;
+      transition: background-color 0.3s ease;
+      display: block;
+      margin: 0 auto;
+    }
+
+    input[type="submit"]:hover {
+      background-color: #97126f;
+    }
+
+    input[type="submit"]:active {
+      transform: scale(0.96);
+      box-shadow: 0px 2px 4px #97126f;
+    }
+
+    /* TOAST */
+    .toast {
+      visibility: hidden;
+      min-width: 250px;
+      background-color: #ff5dc1;
+      color: #fff;
+      text-align: center;
+      border-radius: 8px;
+      padding: 16px;
+      position: fixed;
+      z-index: 1000;
+      left: 50%;
+      bottom: 30px;
+      transform: translateX(-50%);
+      font-weight: bold;
+      opacity: 0;
+      transition: opacity 0.5s, bottom 0.5s;
+    }
+
+    .toast.show {
+      visibility: visible;
+      opacity: 1;
+      bottom: 50px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo">
+      <img src="image-removebg-preview(1).png" alt="Logo Eloah dos Mares">
+      <div class="texto-logo">
+        <h1>Eloah dos Mares</h1>
+        <p>Os peixes mais saudáveis estão aqui!</p>
+      </div>
+    </div>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="cadastro.html">Cadastro</a>
+      <a href="meusdados.html">Meus Dados</a>
+    </nav>
+  </header>
+
+  <main>
+    <form id="form-cliente">
+      <label for="nome_completo">Nome completo:</label>
+      <input type="text" id="nome_completo" class="input-texto" required>
+    
+      <label for="cpf">CPF:</label>
+      <input type="text" id="cpf" class="input-texto" maxlength="14" oninput="mascaraCPF(this)" required>      
+
+      <label for="telefone">Telefone:</label>
+      <input type="tel" id="telefone" class="input-texto" maxlength="15" oninput="mascaraTelefone(this)" required>      
+
+      <label for="email">Email:</label>
+      <input type="email" id="email" class="input-texto" required>
+
+      <label for="cep">CEP:</label>
+      <input type="text" id="cep" class="input-texto" onblur="pesquisarCEP(this.value)" required>
+    
+      <label for="rua">Rua:</label>
+      <input type="text" id="rua" class="input-texto" required>
+
+      <label for="numero:">Número:</label>
+      <input type="number" id="numero" class="input-texto" required>
+
+      <label for="bairro">Bairro:</label>
+      <input type="text" id="bairro" class="input-texto" required>
+
+      <label for="cidade">Cidade:</label>
+      <input type="text" id="cidade" class="input-texto" required>
+
+      <label for="estado">Estado:</label>
+      <input type="text" id="estado" class="input-texto" required>
+    
+      <label for="senha">Senha:</label>
+      <input type="password" id="senha" class="input-texto" required>
+    
+      <input type="submit" value="Enviar">
+    </form>    
+  </main>
+
+  <div id="toast" class="toast"></div>
+
+  <script>
+    function mascaraTelefone(input) {
+      let valor = input.value;
+      valor = valor.replace(/\D/g, "");
+      if (valor.length > 10) {
+        valor = valor.replace(/(\d{2})(\d{5})(\d{4}).*/, "($1) $2-$3");
+      } else if (valor.length > 6) {
+        valor = valor.replace(/(\d{2})(\d{4})(\d+)/, "($1) $2-$3");
+      } else if (valor.length > 2) {
+        valor = valor.replace(/(\d{2})(\d+)/, "($1) $2");
+      } else {
+        valor = valor.replace(/(\d*)/, "($1");
+      }
+      input.value = valor;
+    }
+  
+    function mascaraCPF(input) {
+      let valor = input.value;
+      valor = valor.replace(/\D/g, "");
+      if (valor.length > 3 && valor.length <= 6) {
+        valor = valor.replace(/(\d{3})(\d+)/, "$1.$2");
+      } else if (valor.length > 6 && valor.length <= 9) {
+        valor = valor.replace(/(\d{3})(\d{3})(\d+)/, "$1.$2.$3");
+      } else if (valor.length > 9) {
+        valor = valor.replace(/(\d{3})(\d{3})(\d{3})(\d{1,2}).*/, "$1.$2.$3-$4");
+      }
+      input.value = valor;
+    }
+  
+    function mostrarToast(mensagem, sucesso = true) {
+      const toast = document.getElementById("toast");
+      toast.textContent = mensagem;
+      toast.style.backgroundColor = sucesso ? "#4CAF50" : "#f44336";
+      toast.className = "toast show";
+      setTimeout(() => {
+        toast.className = toast.className.replace("show", "");
+      }, 3000);
+    }
+  
+    function pesquisarCEP(cep) {
+      const validacep = /^[0-9]{8}$/;
+      if (validacep.test(cep)) {
+        const link = "https://viacep.com.br/ws/" + cep + "/json/?callback=preencherCEP";
+        const script = document.createElement("script");
+        script.src = link;
+        document.body.appendChild(script);
+      } else {
+        document.getElementById("cep").value = "";
+        mostrarToast("CEP digitado incorretamente!", false);
+      }
+    }
+  
+    function preencherCEP(conteudo) {
+      if ("erro" in conteudo) {
+        document.getElementById("rua").value = "";
+        document.getElementById("bairro").value = "";
+        document.getElementById("cidade").value = "";
+        document.getElementById("estado").value = "";
+        mostrarToast("CEP não encontrado!", false);
+      } else {
+        document.getElementById("rua").value = conteudo.logradouro;
+        document.getElementById("bairro").value = conteudo.bairro;
+        document.getElementById("cidade").value = conteudo.localidade;
+        document.getElementById("estado").value = conteudo.uf;
+        mostrarToast("CEP encontrado com sucesso!", true);
+      }
+    }
+  </script>
+
+  <script src="./script/cadastro.js"></script>
+
+  <footer style="background: linear-gradient(180deg, #84dcff, #ff86d1); color: #fff; text-align: center; padding: 30px 10px; position: relative;">
+    <div style="font-size: 20px; margin-bottom: 10px; font-weight: bold;">
+      🌊 Os peixes mais suculentos 🌊
+    </div>
+    <p style="font-size: 14px; opacity: 0.8;">
+      (mas só de olhar, porque comer peixe de aquário não pode! 😜)
+    </p>
+    <div style="margin-top: 15px; font-size: 18px;">
+      🐠 🐡 🐟 🦐 🦀
+    </div>
+    <p style="font-size: 12px; margin-top: 20px; opacity: 0.5;">
+      © 2025 Eloah dos Mares. Todos os direitos reservados.
+    </p>
+  </footer>  
+
+</body>
+</html>

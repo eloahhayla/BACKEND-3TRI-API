@@ -15,6 +15,9 @@ const bcrypt = require("bcrypt")
 const cors = require('cors')
 app.use(cors())
 
+// npm i jsonwebtoken
+const jwt = require("jsonwebtoken")
+
 app.post("/cadastrar", async (req, res)=>{
   const cliente = req.body
   const senhaCript = bcrypt.hashSync(cliente.senha, 10)
@@ -40,7 +43,45 @@ try {
   }
 })
 
-app.get("/usuarios", async (req, res)=>{
+app.post("/login", async (req, res) => {
+  // pegar dados do body
+  const login = req.body
+  if (login.email == null || login.senha == null) {
+    return res.status(400).json({erro: "Informe o email e senha"})
+  }
+    // comparar com os dados do banco de dados
+    try {
+      const [resposta] = await db.pool.query(
+        "SELECT nome_completo, email, senha FROM clientes WHERE email = ?",
+        [login.email]
+      )
+      if(!resposta[0]){
+        return res.status(401).json({erro: "Credenciais inválidas"})
+      }
+      // verificar se a senha está correta
+      if(resposta[0].senha.length < 20){
+        if(resposta[0].senha != login.senha){
+          return res.status(401).json({erro: "Credenciais inválidas"})
+        }
+      } else {
+        const senhaValida = await bcrypt.compare(login.senha, resposta[0].senha)
+        if(!senhaValida){
+          return res.status(401).json({erro: "Credenciais inválidas"})
+        }
+      }
+      // dar uma resposta 200(ok) e devolver p token(JWT)
+      const infoToken = {
+        nome_completo: resposta[0].nome_completo,
+        email: resposta[0].email
+      }
+      const tokenDeAcesso = jwt.sign(infoToken, "senha_secreta", {expiresIn: "1m"})
+      return res.status(200).json({token: tokenDeAcesso})
+    } catch (erro) {
+      return res.status(500).json({erro: "Erro interno na API"})
+    }
+})
+
+app.get("/clientes/dados", async (req, res)=>{ // ** AUTENTICAR USUÁRIO
   try {
     const resultado = await db.pool.query("SELECT * FROM clientes")
     res.status(200).json(resultado[0])

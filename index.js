@@ -74,21 +74,122 @@ app.post("/login", async (req, res) => {
         nome_completo: resposta[0].nome_completo,
         email: resposta[0].email
       }
-      const tokenDeAcesso = jwt.sign(infoToken, "senha_secreta", {expiresIn: "1m"})
+      const tokenDeAcesso = jwt.sign(infoToken, "senha_secreta", {expiresIn: "15m"})
       return res.status(200).json({token: tokenDeAcesso})
     } catch (erro) {
       return res.status(500).json({erro: "Erro interno na API"})
     }
 })
 
-app.get("/clientes/dados", async (req, res)=>{ // ** AUTENTICAR USUÁRIO
+app.get("/clientes/dados", autenticar, async (req, res)=>{ // ** AUTENTICAR USUÁRIO
+  // descobrir o email do usuário
+  const usuario = req.usuario
   try {
-    const resultado = await db.pool.query("SELECT * FROM clientes")
+    const resultado = await db.pool.query("SELECT * FROM clientes WHERE email = ?", [usuario.email])
     res.status(200).json(resultado[0])
   } catch (erro) {
     res.status(500).send("erro")
   }
 })
+
+// CRIAR UMA NOVA ROTA PARA CONSUMIR OS PRODUTOS DO BANCO DE DADOS
+// A ROTA DEVE RETORNAR OS PRODUTOS NO FOMRATO JSON
+
+app.get("/produtos/estoque", async (req, res)=>{
+  try {
+    const resultado = await db.pool.query("SELECT * FROM produtos")
+    res.status(200).json(resultado[0])
+  } catch (erro) {
+    res.status(500).send("erro")
+  }
+})
+
+// ROTA PARA LER APENAS 1 PRODUTO ESPECÍFICO DO ESTOQUE
+app.get("/produtos/:id", async (req,res) => {
+  const id = req.params.id
+  try {
+    const resultado = await db.pool.query(
+      "SELECT * FROM produtos WHERE id_produto = ?", [id]
+    )
+    res.status(200).json(resultado[0])
+  } catch(erro) {
+    res.status(500).send("erro")
+  }
+})
+
+// CRIAR UMA ROTA PARA CADASTRAR PRODUTOS
+app.post("/cadastrar/produtos", async (req, res)=>{
+  const produtos = req.body
+try {
+  const resultado = await db.pool.query(
+     `INSERT INTO produtos (
+      id_produto, nome_produto, descricao_produto, preco_produto,
+      estoque_produto, categoria_produto, imagens
+      ) VALUES (
+        ?, ?, ?, ?, ?, ?, ?
+      )`,
+      [produtos.id_produto, produtos.nome_produto,
+      produtos.descricao_produto, produtos.preco_produto,
+      produtos.estoque_produto, produtos.categoria_produto,
+      produtos.imagens,
+      ]
+   )
+   res.status(200).send("Fruta cadastrada!")
+  } catch (erro) {
+    res.status(500).send("Erro interno")
+    console.log(erro)
+  }
+})
+
+// app.put ->
+// ROTA PARA ATUALIZAR UM PRODUTO DO ESTOQUE
+app.put("/produtos/:id", async (req, res) => {
+  const id = req.params.id
+  const produto = req.body
+
+  try {
+    const [resultado] = await db.pool.query(
+      `UPDATE produtos SET
+      nome_produto = ?,
+      descricao_produto = ?,
+      preco_produto = ?,
+      estoque_produto = ?,
+      categoria_produto = ?,
+      imagens = ?
+      WHERE id_produto = ?`
+    ,
+      [
+        produto.nome_produto, produto.descricao_produto,
+        produto.preco_produto, produto.estoque_produto,
+        produto.categoria_produto, produto.imagens,
+        id
+      ]
+    )
+    if (resultado.affectedRows === 0) {
+      return res.status(404).json({ erro: "Produto não encontrado" })
+    }
+    res.status(200).send("Produto atualizado com sucesso!")
+  } catch (erro) {
+    console.error(erro)
+    res.status(500).send("Erro interno ao atualizar produto")
+  }
+})
+
+// app.delete
+
 app.listen(port, ()=>{
   console.log("API RODANDO NA PORTA" + port)
 })
+
+function autenticar(req, res, next){
+  const authHeader = req.headers['authorization']
+  const token = authHeader && authHeader.split(' ')[1]
+  if (token == null){
+      return res.status(401).json({erro: "Token não enviado, usar Authorization Bearer <token>"})
+  }
+  jwt.verify(token, "senha_secreta", (err, usuario) => {
+      if (err) return res.status(403).json({erro: "Token inválido"})
+      req.usuario = usuario
+      next()
+  })  
+}

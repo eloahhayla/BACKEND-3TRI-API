@@ -143,35 +143,23 @@ try {
 
 // app.put ->
 // ROTA PARA ATUALIZAR UM PRODUTO DO ESTOQUE
-app.put("/produtos/:id", async (req, res) => {
-  const id = req.params.id
+app.put("/produtos/:id", async (req, res) =>{
   const produto = req.body
-
-  try {
-    const [resultado] = await db.pool.query(
-      `UPDATE produtos SET
-      nome_produto = ?,
-      descricao_produto = ?,
-      preco_produto = ?,
-      estoque_produto = ?,
-      categoria_produto = ?,
-      imagens = ?
-      WHERE id_produto = ?`
-    ,
-      [
-        produto.nome_produto, produto.descricao_produto,
-        produto.preco_produto, produto.estoque_produto,
-        produto.categoria_produto, produto.imagens,
-        id
-      ]
+  const id = req.params.id
+  try{
+    const resultado = await db.pool.query(
+   `UPDATE produtos SET foto = ?, nome = ?,
+   categoria = ? WHERE id_produto = ?`,
+   [produto.imagens, produto.nome_produto, produto.descricao_produto,
+  produto.preco_produto, produto.estoque_produto, produto.categoria_produto, id]
     )
-    if (resultado.affectedRows === 0) {
-      return res.status(404).json({ erro: "Produto não encontrado" })
+    if(resultado[0].affectedRows === 0){
+      res.status(404).json({erro: "Produto não existe no BD."})
     }
-    res.status(200).send("Produto atualizado com sucesso!")
+  res.status(200).json({resposta: "Produto atualizado com sucesso!"})
   } catch (erro) {
-    console.error(erro)
-    res.status(500).send("Erro interno ao atualizar produto")
+    console.log(erro)
+    res.status(500).json({erro: erro})
   }
 })
 

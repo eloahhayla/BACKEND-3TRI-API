@@ -164,6 +164,24 @@ app.put("/produtos/:id", async (req, res) =>{
 })
 
 // app.delete
+app.delete("/produtos/delete/:id", async (req, res) => {
+  const id = req.params.id;
+
+  try {
+    const [resultado] = await db.pool.query(
+      "DELETE FROM produtos WHERE id = ?",
+      [id]
+    );
+
+    if (resultado.affectedRows === 0) {
+      return res.status(404).json({ mensagem: "Produto não encontrado" });
+    }
+
+    res.status(200).json({ mensagem: "Produto deletado com sucesso!" });
+  } catch (erro) {
+    res.status(500).json({ erro: "Erro ao deletar produto: " + erro });
+  }
+});
 
 app.listen(port, ()=>{
   console.log("API RODANDO NA PORTA" + port)
